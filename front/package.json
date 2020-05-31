@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@nuxtjs/apollo": "^4.0.1-rc.1",
+    "@nuxtjs/vuetify": "^1.11.2",
     "core-js": "2.6.9",
     "nuxt": "^2.0.0"
   },
