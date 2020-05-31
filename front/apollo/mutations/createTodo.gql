@@ -1,0 +1,11 @@
+mutation($text: String!, $userId: String!) {
+  createTodo(input: { text: $text, userId: $userId }) {
+    id
+    text
+    done
+    user {
+      id
+      name
+    }
+  }
+}

@@ -1,0 +1,11 @@
+mutation($id: String!) {
+  deleteTodo(input: $id){
+    id
+    text
+    done
+    user{
+      id
+      name
+    }
+  }
+}

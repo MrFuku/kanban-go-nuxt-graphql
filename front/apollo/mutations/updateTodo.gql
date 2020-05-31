@@ -1,0 +1,11 @@
+mutation($id: String!, $text: String!, $done: Boolean!, $userId: String!) {
+  updateTodo(input: { id: $id, text: $text, done: $done, userId: $userId }) {
+    id
+    text
+    done
+    user {
+      id
+      name
+    }
+  }
+}
