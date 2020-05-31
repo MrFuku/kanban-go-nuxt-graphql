@@ -38,7 +38,17 @@ export default {
   ** Nuxt.js modules
   */
   modules: [
+    '@nuxtjs/apollo'
   ],
+  apollo: {
+    clientConfigs: {
+      default: {
+        // GraphQLサーバーのエンドポイント
+        httpEndpoint: 'http://server:8080/query',
+        browserHttpEndpoint: 'http://localhost:8080/query'
+      }
+    },
+  },
   /*
   ** Build configuration
   */
