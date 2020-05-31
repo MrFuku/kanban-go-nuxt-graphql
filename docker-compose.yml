@@ -1,5 +1,15 @@
 version: '3'
 services:
+  server:
+    build: ./server
+    tty: true
+    ports:
+      - 8080:8080
+    environment:
+      LANG: ja_JP.UTF-8
+      TZ: Asia/Tokyo
+    volumes:
+      - ./server/:/go/src/github.com/MrFuku/kanban-go-nuxt-graphql/server
   db:
     image: mysql:5.7.24
     ports:
