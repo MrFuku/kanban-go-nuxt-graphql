@@ -1,72 +1,105 @@
 <template>
-  <div class="container">
-    <div>
-      <logo />
-      <h1 class="title">
-        front
-      </h1>
-      <h2 class="subtitle">
-        My delightful Nuxt.js project
-      </h2>
-      <div class="links">
-        <a
-          href="https://nuxtjs.org/"
-          target="_blank"
-          class="button--green"
-        >
-          Documentation
-        </a>
-        <a
-          href="https://github.com/nuxt/nuxt.js"
-          target="_blank"
-          class="button--grey"
-        >
-          GitHub
-        </a>
-      </div>
-    </div>
-  </div>
+  <v-app id="inspire">
+    <Header
+      :drawer="drawer"
+      @change="drawer = !drawer"
+    >
+      <SideNav />
+    </Header>
+    <v-content>
+      <v-container
+        fluid
+        fill-height
+      >
+        <v-row style="height: 90%;">
+          <v-col cols="6">
+            <Board
+              :todos="unfinishedTodos"
+              :status="false"
+              @updateTodo="updateTodo"
+            >
+              <h3>未完了</h3>
+            </Board>
+          </v-col>
+          <v-col cols="6">
+            <Board
+              :todos="finishedTodos"
+              :status="true"
+              @updateTodo="updateTodo"
+            >
+              <h3>完了</h3>
+            </Board>
+          </v-col>
+        </v-row>
+      </v-container>
+    </v-content>
+  </v-app>
 </template>
 
 <script>
-import Logo from '~/components/Logo.vue'
+import Header from "~/components/Header";
+import SideNav from "~/components/SideNav";
+import Board from "~/components/Board";
+import todos from "~/apollo/queries/todos.gql";
+import users from "~/apollo/queries/users.gql";
+import updateTodo from "~/apollo/mutations/updateTodo.gql";
 
 export default {
   components: {
-    Logo
+    Header,
+    SideNav,
+    Board
+  },
+  data() {
+    return {
+      drawer: true
+    };
+  },
+  computed: {
+    unfinishedTodos() {
+      return this.todos.filter(t => !t.done);
+    },
+    finishedTodos() {
+      return this.todos.filter(t => t.done);
+    }
+  },
+  methods: {
+    updateTodo(todoId, status) {
+      let todo = this.todos.find(t => t.id === todoId);
+      console.log(todoId, status)
+      if (!todo || todo.done === status) return;
+
+      const { id, text, userId } = todo;
+      const done = status;
+      this.$apollo
+        .mutate({
+          mutation: updateTodo,
+          variables: {
+            id,
+            text,
+            done,
+            userId
+          },
+          refetchQueries: [
+            {
+              query: todos
+            }
+          ]
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    }
+  },
+  apollo: {
+    todos: {
+      prefetch: true,
+      query: todos
+    },
+    users: {
+      prefetch: true,
+      query: users
+    }
   }
-}
+};
 </script>
-
-<style>
-.container {
-  margin: 0 auto;
-  min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-}
-
-.title {
-  font-family: 'Quicksand', 'Source Sans Pro', -apple-system, BlinkMacSystemFont,
-    'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  display: block;
-  font-weight: 300;
-  font-size: 100px;
-  color: #35495e;
-  letter-spacing: 1px;
-}
-
-.subtitle {
-  font-weight: 300;
-  font-size: 42px;
-  color: #526488;
-  word-spacing: 5px;
-  padding-bottom: 15px;
-}
-
-.links {
-  padding-top: 15px;
-}
-</style>
